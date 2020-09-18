@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content">
+        <h1 style="text-align: left">Image Scraper</h1><br><br>
+        <div class="form">
+            <form action="{{ url_for('search') }}" method="POST">
+                <input type="text" name="searchWord" id="searchID" placeholder="Type a word..">
+                <button type="submit" name="Search">Search</button>
+                {% if button %}
+                    <button  formaction="{{ url_for('download')}}">Download</button><br><br>
+                {% endif %}
+                {% if msg %}
+                    <p>{{msg}}</p><br><br>
+                {% endif %}
+            </form>
+        </div>
+        <div>
+            {%for image in images%}
+            <img src={{image}} alt={{alt_name}} width="104" height="142">
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}
+
+
+
+
