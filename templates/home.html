@@ -4,7 +4,11 @@
         <h1 style="text-align: left">Image Scraper</h1><br><br>
         <div class="form">
             <form action="{{ url_for('search') }}" method="POST">
-                <input type="text" name="searchWord" id="searchID" placeholder="Type a word..">
+                <label for="searchID">Search</label>
+                <input type="text"  name="searchWord" id="searchID" placeholder="Type a word..">
+                <label for="quantity">Limit</label>
+                <input type="number" name="limit" id="quantity" placeholder="Limit" max="500" min="1" \
+                       value="10">
                 <button type="submit" name="Search">Search</button>
                 {% if button %}
                     <button  formaction="{{ url_for('download')}}">Download</button><br><br>

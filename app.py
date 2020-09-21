@@ -1,14 +1,17 @@
 from flask import Flask, render_template, request
+from selenium import webdriver
 from bs4 import BeautifulSoup
 import requests
 import os
+import time
 
 
+DRIVER_PATH = './chromedriver.exe'
 target_path = r'C:\Users\ameharwade\Downloads'
 search_url = 'https://www.google.com/search?tbm=isch&q={q}'
 img_urls = []
 search_string = ''
-
+buffer = 10
 
 app = Flask(__name__)
 
@@ -19,16 +22,45 @@ def home():
     return render_template('home.html', button=False, msg='')
 
 
+def scroll_to_end(wd):
+    wd.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    wd.implicitly_wait(5)
+
+
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     if request.method == 'POST':
-        global search_string
+        global search_string, img_urls, limit
         img_urls.clear()
-        search_string = request.form['searchWord'].replace(" ", "")
-        html = requests.get(search_url.format(q=search_string)).text
-        soup = BeautifulSoup(html, 'html5lib')
-        for img in soup.find_all('img', class_='t0fcAb'):
-            img_urls.append(img['src'])
+        search_string = request.form['searchWord'].replace(" ", "+")
+        limit = int(request.form['limit'].replace(" ", "")) if request.form['limit'].replace(" ", "") else 10
+
+        thumbnail_results = []
+        counter = 0
+        with webdriver.Chrome(executable_path=DRIVER_PATH) as wd:
+            wd.get(search_url.format(q=search_string)) # load the page
+            while len(thumbnail_results) < (limit + buffer):
+                thumbnail_results = wd.find_elements_by_css_selector("img.Q4LuWd")  # thumbnail images
+                scroll_to_end(wd)
+
+            for img in thumbnail_results:
+                if counter < limit:
+                    try:
+                        img.click()
+                        time.sleep(2)
+                    except Exception as e:
+                        print("Count not click the ThumbNail {}".format(e))
+                        continue
+                    actual_images = wd.find_elements_by_css_selector('img.n3VNCb')  # enlarged image on right
+
+                    for image in actual_images:
+                        if image.get_attribute('src') and 'http' in image.get_attribute('src'):
+                            print('image {}- {}'.format(counter, image.get_attribute('src')))
+                            counter += 1
+                            img_urls.append(image.get_attribute('src'))
+                else:
+                    break
+
     return render_template('home.html', images=img_urls,
                            alt_name=search_string, button=True, msg='')
 
