@@ -1,17 +1,23 @@
 from flask import Flask, render_template, request
 from selenium import webdriver
-from bs4 import BeautifulSoup
 import requests
 import os
 import time
 
 
-DRIVER_PATH = './chromedriver.exe'
 target_path = r'C:\Users\ameharwade\Downloads'
 search_url = 'https://www.google.com/search?tbm=isch&q={q}'
 img_urls = []
 search_string = ''
 buffer = 10
+
+# chrome options
+chrome_options = webdriver.ChromeOptions()
+chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("--no-sandbox")
+
 
 app = Flask(__name__)
 
@@ -37,7 +43,7 @@ def search():
 
         thumbnail_results = []
         counter = 0
-        with webdriver.Chrome(executable_path=DRIVER_PATH) as wd:
+        with webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=chrome_options) as wd:
             wd.get(search_url.format(q=search_string)) # load the page
             while len(thumbnail_results) < (limit + buffer):
                 thumbnail_results = wd.find_elements_by_css_selector("img.Q4LuWd")  # thumbnail images
