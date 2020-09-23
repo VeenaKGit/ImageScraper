@@ -54,7 +54,7 @@ def search():
         if limit - stock_limit > 0:
             thumbnail_results = []
             counter = stock_limit
-            with webdriver.Chrome(executable_path=DRIVER_PATH, chrome_options=chrome_options) as wd:
+            with webdriver.Chrome(executable_path=DRIVER_PATH, options=chrome_options) as wd:
                 wd.get(search_url.format(q=search_string))  # load the page
                 while len(thumbnail_results) < limit:
                     thumbnail_results = wd.find_elements_by_css_selector("img.Q4LuWd")  # thumbnail images
