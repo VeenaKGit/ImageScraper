@@ -18,7 +18,6 @@ chrome_options.add_argument("--headless")
 chrome_options.add_argument("--disable-dev-shm-usage")
 chrome_options.add_argument("--no-sandbox")
 
-
 app = Flask(__name__)
 
 
@@ -30,7 +29,7 @@ def home():
 
 def scroll_to_end(wd):
     wd.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    wd.implicitly_wait(5)
+    time.sleep(2)
 
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -53,7 +52,7 @@ def search():
                 if counter < limit:
                     try:
                         img.click()
-                        time.sleep(2)
+                        time.sleep(.5)
                     except Exception as e:
                         print("Count not click the ThumbNail {}".format(e))
                         continue
