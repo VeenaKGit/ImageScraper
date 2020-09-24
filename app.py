@@ -68,7 +68,7 @@ def search():
                     break
 
     return render_template('home.html', images=img_urls,
-                           alt_name=search_string, button=True, msg='')
+                           alt_name=search_string, button=False, msg='')
 
 
 def create_folder(name):
@@ -102,7 +102,7 @@ def download():
                     print('Error - Download failed {}'. format(e))
     else:
         return render_template('home.html', images=img_urls,
-                               alt_name=search_string, button=True,
+                               alt_name=search_string, button=False,
                                msg='Download Failed! Please try again!!')
     return render_template('home.html', images=img_urls,
                            alt_name=search_string, button=False,
